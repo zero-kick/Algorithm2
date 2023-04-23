@@ -96,54 +96,52 @@ public class BOJ4179 {
         int[] dy = {0, -1, 0, 1};
 
         // 미로찾기 시작
-        for(int i = 0; i < r; i++) {
-            for(int j = 0; j < c; j++) {
+        // 불의 번짐
+        while(!qF.isEmpty()) {
+            Pair pollCellF = qF.poll();      // 탐색할 칸 poll
 
-                // 불의 번짐
-                while(!qF.isEmpty()) {
-                    Pair pollCellF = qF.poll();      // 탐색할 칸 poll
+            // 인접한 칸 탐색
+            for(int k = 0; k < 4; k++) {
+                int nx = pollCellF.x + dx[k];
+                int ny = pollCellF.y + dy[k];
 
-                    // 인접한 칸 탐색
-                    for(int k = 0; k < 4; k++) {
-                        int nx = pollCellF.x + dx[k];
-                        int ny = pollCellF.y + dy[k];
+                // 인접한 칸이 미로 범위를 벗어나거나, 벽이거나, 이미 불이 나있으면 skip
+                if(isNotRange(nx, ny) || maze[nx][ny] == '#' || fire[nx][ny] != -1) continue;
 
-                        // 인접한 칸이 미로 범위를 벗어나거나, 벽이거나, 이미 불이 나있으면 skip
-                        if(isNotRange(nx, ny) || maze[nx][ny] == '#' || fire[nx][ny] != -1) continue;
-
-                        // 불이 번짐
-                        qF.offer(new Pair(nx, ny));
-                        fire[nx][ny] = fire[pollCellF.x][pollCellF.y] + 1;
-                    }
-                }
-
-                // 지훈 이동
-                while(!qJ.isEmpty()) {
-                    Pair pollCellJ = qJ.poll();     // 탐색할 칸 poll
-
-                    // 지훈이가 이동 시 도착 시간
-                    int time = jihoon[pollCellJ.x][pollCellJ.y] + 1;
-
-                    // 지훈이 이동 중 가장자리에 도달하면 탈출
-                    if(isEdge(pollCellJ.x, pollCellJ.y)) return String.valueOf(time);
-
-                    // 인접한 칸 탐색
-                    for(int k = 0; k < 4; k++) {
-                        int nx = pollCellJ.x + dx[k];
-                        int ny = pollCellJ.y + dy[k];
-
-                        // 인접한 칸이 미로 범위를 벗어나거나, 벽이거나,
-                        // 지훈이 도착 시간 전에 이미 불이 나있거나, 지훈이가 이미 지나온 곳이면 skip
-                        if(isNotRange(nx, ny) || maze[nx][ny] == '#'
-                                || fire[nx][ny] <= time || jihoon[nx][ny] != -1) continue;
-                        
-                        // 지훈 이동
-                        qJ.offer(new Pair(nx, ny));
-                        jihoon[nx][ny] = jihoon[pollCellJ.x][pollCellJ.y] + 1;
-                    }
-                }
+                // 불이 번짐
+                qF.offer(new Pair(nx, ny));
+                fire[nx][ny] = fire[pollCellF.x][pollCellF.y] + 1;
             }
         }
+
+        // 지훈 이동
+        while(!qJ.isEmpty()) {
+            Pair pollCellJ = qJ.poll();     // 탐색할 칸 poll
+
+            // 지훈이가 이동 시 도착 시간
+            int time = jihoon[pollCellJ.x][pollCellJ.y] + 1;
+
+            // 지훈이 이동 중 가장자리에 도달하면 탈출
+            if(isEdge(pollCellJ.x, pollCellJ.y)) return String.valueOf(time);
+
+            // 인접한 칸 탐색
+            for(int k = 0; k < 4; k++) {
+                int nx = pollCellJ.x + dx[k];
+                int ny = pollCellJ.y + dy[k];
+
+                // 인접한 칸이 미로 범위를 벗어나거나, 벽이거나,
+                // 지훈이 도착 시간 전에 이미 불이 나있거나(-1이 아닌것중에서 비교해줘야함 불이 아예 안난 곳은 지훈이는 갈 수 있음)
+                // , 지훈이가 이미 지나온 곳이면 skip
+                if(isNotRange(nx, ny) || maze[nx][ny] == '#'
+                        || (fire[nx][ny] != -1 && fire[nx][ny] <= time)
+                        || jihoon[nx][ny] != -1) continue;
+
+                // 지훈 이동
+                qJ.offer(new Pair(nx, ny));
+                jihoon[nx][ny] = jihoon[pollCellJ.x][pollCellJ.y] + 1;
+            }
+        }
+
         // 이동을 끝마쳤는데도 탈출을 하지 못했으므로
         return "IMPOSSIBLE";
     }
