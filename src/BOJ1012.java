@@ -42,8 +42,8 @@ public class BOJ1012 {
             }
 
             bw.write(String.valueOf(findFarm()) + "\n");
-            bw.flush();
         }
+        bw.flush();
         bw.close();
     }
 
@@ -63,7 +63,7 @@ public class BOJ1012 {
             for(int j = 0; j < m; j++) {
                 // 배추 위치 찾기 (시작점 찾기)
                 // 배추가 심어져 있지 않거나, 방문한적이 있으면 skip
-                if(farm[i][j] == 0 && visit[i][j]) continue;
+                if(farm[i][j] == 0 || visit[i][j]) continue;
 
                 // 배추 무리 + 1
                 cnt++;
