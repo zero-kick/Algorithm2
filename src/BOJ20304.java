@@ -1,11 +1,13 @@
 import java.io.*;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class BOJ20304 {
     public static int n, m;
-    public static int[] p;
-    public static int[][] binary;
+    public static int[] safeDis;
+    public static Queue<Integer> q;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -13,25 +15,42 @@ public class BOJ20304 {
         n = Integer.parseInt(br.readLine());
         m = Integer.parseInt(br.readLine());
 
-        p = new int[m];
+        // 안전거리 초기화
+        safeDis = new int[1000001];
+        Arrays.fill(safeDis, Integer.MIN_VALUE);
+
+        // 해커가 시도한 비밀번호는 안전거리 0으로 세팅하고 큐에 담는다.
+        q = new LinkedList<Integer>();
         StringTokenizer st = new StringTokenizer(br.readLine());
         for(int i = 0; i < m; i++) {
-            p[i] = Integer.parseInt(st.nextToken());
+            int p = Integer.parseInt(st.nextToken());
+            q.offer(p);
+            safeDis[p] = 0;
         }
 
-        // 1,000,000을 이진법으로 표현하기 위해서는 2^0 ~ 2^19 까지, 총 20자리가 필요
-        binary = new int[p.length][20];
+        bw.write(String.valueOf(findSafeDis()));
+        bw.flush();
+        bw.close();
+        br.close();
+    }
 
-        // 해커가 시도한 비밀번호들을 binary로 변환
-        for(int i = 0; i < p.length; i++) {
-            int tmp = p[i];
-            for(int j = 0; j < 20; j++) {
-                if(tmp > 0) {
-                    binary[i][19-j] = tmp % 2;
-                    tmp = tmp / 2;
-                }
+    public static int findSafeDis() {
+        int maxSafeDis = 0;
+
+        while(!q.isEmpty()) {
+            int cur = q.poll();
+
+            for(int i = 0; i < 20; i++) {
+                int nx = cur^(1<<i);
+
+                if(nx > n || (safeDis[nx] != Integer.MIN_VALUE)) continue;
+
+                q.offer(nx);
+                safeDis[nx] = safeDis[cur] + 1;
+                maxSafeDis = Math.max(maxSafeDis, safeDis[nx]);
             }
         }
 
+        return maxSafeDis;
     }
 }
