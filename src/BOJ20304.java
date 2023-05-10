@@ -40,9 +40,11 @@ public class BOJ20304 {
         while(!q.isEmpty()) {
             int cur = q.poll();
 
+            // n의 최댓값인 1,000,000은 2진법으로 20자리이므로, 0 ~ 19까지 확인한다.
             for(int i = 0; i < 20; i++) {
                 int nx = cur^(1<<i);
 
+                // 비밀번호의 최댓값을 초과하거나, 이미 안전거리 계산을 마친 비밀번호인 경우 skip
                 if(nx > n || (safeDis[nx] != Integer.MIN_VALUE)) continue;
 
                 q.offer(nx);
