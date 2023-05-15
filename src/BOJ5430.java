@@ -6,10 +6,10 @@ public class BOJ5430 {
     public static int tc, n;
     public static String p;
     public static ArrayDeque<String> deque;
+    public static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st;
 
         tc = Integer.parseInt(br.readLine());
@@ -25,15 +25,13 @@ public class BOJ5430 {
                 deque.offer(st.nextToken());
             }
 
-            bw.write(ac() + "\n");
+            ac();
         }
-
-        bw.flush();
-        bw.close();
+        System.out.println(sb);
         br.close();
     }
 
-    public static String ac() {
+    public static void ac() {
         // 뒤집기가 되어있는 상태인지 체크하는 flag
         boolean isReverse = false;
 
@@ -50,13 +48,15 @@ public class BOJ5430 {
                     if(isReverse) {
                         // 덱이 비어있는 경우 error
                         if(deque.pollLast() == null) {
-                            return "error";
+                            sb.append("error\n");
+                            return;
                         }
                         // 정방향인 경우
                     } else {
                         // 덱이 비어있는 경우 error
                         if(deque.pollFirst() == null) {
-                            return "error";
+                            sb.append("error\n");
+                            return;
                         }
                     }
                     break;
@@ -64,31 +64,29 @@ public class BOJ5430 {
         }
 
         // 결과 조립
-        String result = "[";
+        sb.append('[');
 
         // 덱에 원소가 있을 경우에만.
         if(deque.size() > 0) {
             if(isReverse) {
                 // 첫번째 원소 poll
-                result += deque.pollLast();
+                sb.append(deque.pollLast());
 
                 // 다음 원소부터는 , 추가
                 while(!deque.isEmpty()) {
-                    result += "," + deque.pollLast();
+                    sb.append(',').append(deque.pollLast());
                 }
             } else {
                 // 첫번째 원소 poll
-                result += deque.pollFirst();
+                sb.append(deque.pollFirst());
 
                 // 다음 원소부터는 , 추가
                 while(!deque.isEmpty()) {
-                    result += "," + deque.pollFirst();
+                    sb.append(',').append(deque.pollFirst());
                 }
             }
         }
 
-        result += "]";
-
-        return result;
+        sb.append(']').append('\n');
     }
 }
